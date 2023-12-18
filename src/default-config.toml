@@ -3,4 +3,5 @@ email = ""
 password = ""
 
 [brewfather]
+# WIP! explain here how to setup brewfather.
 logging_id = ""

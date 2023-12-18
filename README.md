@@ -11,6 +11,28 @@
 
 <!-- cargo-rdme start -->
 
-TODO
+Brewfatherlog is a small tool to synchronize the temperatures of your Grainfather fermenters to Brewfather.
+
+## Instalation
+
+Brewfatherlog can be installed via `cargo` with:
+
+```bash
+cargo install brewfatherlog
+```
+
+You can also get a binary from the [releases page](https://github.com/orium/brewfatherlog/releases/).
+
+### Configuration
+
+On the first run Brewfatherlog will create a configuration file in your configuration directory (in POSIX systems
+that should be in `~/.config/`). You will need to edit that file to configure authentication for both Grainfather
+and Brewfather.
+
+WIP! talk about enabling streaming logging in brewfather.
+
+### Systemd daemon
+
+WIP!
 
 <!-- cargo-rdme end -->
