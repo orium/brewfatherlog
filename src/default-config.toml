@@ -1,0 +1,6 @@
+[grainfather.auth]
+email = ""
+password = ""
+
+[brewfather]
+logging_id = ""

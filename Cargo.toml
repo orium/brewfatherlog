@@ -5,9 +5,11 @@ version = "0.0.0-pre"
 authors = ["Diogo Sousa <diogogsousa@gmail.com>"]
 
 edition = "2021"
+rust-version = "1.70.0"
 
 homepage = "https://github.com/orium/brewfatherlog"
 repository = "https://github.com/orium/brewfatherlog"
+documentation = "https://docs.rs/brewfatherlog"
 readme = "README.md"
 
 keywords = [
@@ -19,6 +21,7 @@ license = "MPL-2.0"
 # What to include when packaging.
 include = [
     "/src/**/*.rs",
+    "/src/**/*.toml",
     "/Cargo.toml",
     "/Cargo.lock",
     "/LICENSE.md",
@@ -27,6 +30,15 @@ include = [
 ]
 
 [dependencies]
+tokio = { version = "1.35.0", features = ["rt-multi-thread", "macros"] }
+thiserror = "1.0.51"
+reqwest = { version = "0.11.22", features = ["json", "cookies"] }
+serde = { version = "1.0.193", features = ["derive"] }
+time = { version = "0.3.30", features = ["formatting"] }
+serde_json = "1.0.108"
+dirs = "5.0.1"
+toml = "0.8.8"
+serde_derive = "1.0.193"
 
 [features]
 fatal-warnings = []
