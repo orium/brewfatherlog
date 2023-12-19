@@ -23,8 +23,8 @@ pub enum BrewfatherError {
 }
 
 #[derive(Serialize)]
-pub struct BrewfatherLoggingEvent {
-    pub name: String,
+pub struct BrewfatherLoggingEvent<'a> {
+    pub name: &'a str,
     pub temp: f32,
 }
 
@@ -38,7 +38,7 @@ impl Brewfather {
         Brewfather { logging_id: logging_id.into(), client: reqwest::Client::new() }
     }
 
-    pub async fn log(&self, event: BrewfatherLoggingEvent) -> Result<(), BrewfatherError> {
+    pub async fn log(&self, event: BrewfatherLoggingEvent<'_>) -> Result<(), BrewfatherError> {
         #[derive(Deserialize)]
         struct Response {
             result: Option<String>,

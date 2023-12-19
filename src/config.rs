@@ -3,7 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-use std::path::PathBuf;
+use std::path::Path;
 
 #[derive(serde_derive::Deserialize, Debug)]
 pub struct GrainfatherAuth {
@@ -28,36 +28,26 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn from_config_file() -> Config {
-        let config_file_path = Config::config_file_path();
-
+    pub fn from_config_file(config_file_path: &Path) -> Config {
         let config_string =
-            std::fs::read_to_string(config_file_path).expect("Failed to read configuration file");
+            std::fs::read_to_string(config_file_path).expect("failed to read configuration file");
 
         Config::from_toml(&config_string)
     }
 
     fn from_toml(string: &str) -> Config {
-        toml::from_str::<Config>(string).expect("Failed to parse default configuration file")
+        toml::from_str::<Config>(string).expect("failed to parse default configuration file")
     }
 
-    pub fn create_file_if_nonexistent() {
-        let config_file_path = Config::config_file_path();
-
+    pub fn create_file_if_nonexistent(config_file_path: &Path) {
         if !config_file_path.exists() {
             let default_config: &str = include_str!("default-config.toml");
 
             std::fs::create_dir_all(config_file_path.parent().unwrap())
-                .expect("Failed to create the default configuration file");
+                .expect("Failed to create the program directory");
 
             std::fs::write(config_file_path, default_config)
-                .expect("Unable to write default configuration file");
+                .expect("failed to write default configuration file");
         }
-    }
-
-    fn config_file_path() -> PathBuf {
-        let config_dir: PathBuf = dirs::config_dir().expect("Unable to get config directory");
-
-        config_dir.join("brewfatherlog").join("brewfatherlog.toml")
     }
 }

@@ -96,6 +96,7 @@ impl Grainfather {
         // Ugly hack to get the token. This might break in the future.
         let csrf_token = {
             let response_text = http_response.text().await?;
+
             response_text
                 .split(',')
                 .find(|t| t.contains("csrfToken"))

@@ -13,7 +13,7 @@
 
 Brewfatherlog is a small tool to synchronize the temperatures of your Grainfather fermenters to Brewfather.
 
-## Instalation
+## Installation
 
 Brewfatherlog can be installed via `cargo` with:
 
