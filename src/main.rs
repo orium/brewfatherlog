@@ -28,7 +28,32 @@
 //!
 //! ## Systemd daemon
 //!
-//! WIP!
+//! To make Brewfatherlog a systemd service that will start automatically create file
+//! `/etc/systemd/system/brewfatherlog.service` with the content (replace the user and the path to the brewfatherlog
+//! binary):
+//!
+//! ```ini
+//! [Unit]
+//! Description=Log temperatures from grainfather fermenters to brewfather
+//! After=network.target
+//!
+//! [Service]
+//! Type=simple
+//! Restart=always
+//! RestartSec=1
+//! User=<USER>
+//! ExecStart=<PATH TO brewfatherlog>
+//!
+//! [Install]
+//! WantedBy=multi-user.target
+//! ```
+//!
+//! and then enable and start the service:
+//!
+//! ```bash
+//! systemctl enable brewfatherlog
+//! systemctl start brewfatherlog
+//! ```
 
 mod config;
 
@@ -47,6 +72,7 @@ use time::OffsetDateTime;
 use tokio::time::sleep;
 
 pub const PROGRAM_NAME: &str = env!("CARGO_PKG_NAME");
+pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn program_dir_path() -> PathBuf {
     let home_dir: PathBuf = dirs::home_dir().expect("Unable to get home directory");
@@ -135,7 +161,7 @@ async fn main_loop(config: Config) -> ! {
     let init_grainfather =
         || Grainfather::new(&config.grainfather.auth.email, &config.grainfather.auth.password);
 
-    info!("Starting {}.", PROGRAM_NAME);
+    info!("Starting {} v{}.", PROGRAM_NAME, VERSION);
 
     let mut last_logged: HashMap<FermenterId, OffsetDateTime> = HashMap::new();
 
@@ -160,6 +186,10 @@ async fn main_loop(config: Config) -> ! {
                 continue;
             }
         };
+
+        if ferms.is_empty() {
+            info!("No fermenters found.");
+        }
 
         for ferm in ferms {
             let temp_record = match grainfather.get_fermenter_temperature(ferm.id).await {

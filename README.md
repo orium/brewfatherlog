@@ -34,6 +34,31 @@ In Brewfather you need to enable the "Custom Stream" integration in the
 
 ### Systemd daemon
 
-WIP!
+To make Brewfatherlog a systemd service that will start automatically create file
+`/etc/systemd/system/brewfatherlog.service` with the content (replace the user and the path to the brewfatherlog
+binary):
+
+```ini
+[Unit]
+Description=Log temperatures from grainfather fermenters to brewfather
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=<USER>
+ExecStart=<PATH TO brewfatherlog>
+
+[Install]
+WantedBy=multi-user.target
+```
+
+and then enable and start the service:
+
+```bash
+systemctl enable brewfatherlog
+systemctl start brewfatherlog
+```
 
 <!-- cargo-rdme end -->
