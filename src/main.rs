@@ -34,14 +34,16 @@ mod config;
 
 use crate::config::Config;
 use brewfatherlog::brewfather::{Brewfather, BrewfatherLoggingEvent};
-use brewfatherlog::grainfather::Grainfather;
+use brewfatherlog::grainfather::{Fermenter, FermenterId, Grainfather, TemperatureRecord};
 use log::{error, info, warn};
 use simplelog::{
     format_description, ColorChoice, CombinedLogger, LevelFilter, TermLogger, TerminalMode,
     WriteLogger,
 };
+use std::collections::HashMap;
 use std::path::PathBuf;
 use std::time::Duration;
+use time::OffsetDateTime;
 use tokio::time::sleep;
 
 pub const PROGRAM_NAME: &str = env!("CARGO_PKG_NAME");
@@ -86,8 +88,55 @@ fn init_logging() {
     .expect("failed to initialize loggers");
 }
 
-async fn main_loop(config: Config) {
+async fn log_temperature(
+    brewfather: &Brewfather,
+    last_logged: &mut HashMap<FermenterId, OffsetDateTime>,
+    fermenter: &Fermenter,
+    temp_record: TemperatureRecord,
+) {
+    let now = OffsetDateTime::now_utc();
+    let age: time::Duration = now - temp_record.timestamp;
+
+    if age > Duration::from_secs(30 * 60) {
+        warn!(
+            "Ignoring temperature {:.02} °C of fermenter \"{}\" because the temperature is too old ({:?}).",
+            temp_record.temperature,
+            fermenter.name,
+            age,
+        );
+        return;
+    }
+
+    if last_logged.get(&fermenter.id).is_some_and(|last| now <= *last) {
+        warn!(
+            "Ignoring temperature {:.02} °C of fermenter \"{}\" because we already logged it.",
+            temp_record.temperature, fermenter.name,
+        );
+        return;
+    }
+
+    let event = BrewfatherLoggingEvent { name: &fermenter.name, temp: temp_record.temperature };
+
+    match brewfather.log(event).await {
+        Ok(()) => {
+            info!("Logged temperature of fermenter \"{}\" to brewfather.", fermenter.name);
+            last_logged.insert(fermenter.id, temp_record.timestamp);
+        }
+        Err(err) => {
+            error!(
+                "Error logging the temperature of fermenter \"{}\" to brewfather: {:?}",
+                fermenter.name, err
+            );
+        }
+    }
+}
+
+// WIP! request timeout 10 s
+
+async fn main_loop(config: Config) -> ! {
     info!("Starting {}.", PROGRAM_NAME);
+
+    let mut last_logged: HashMap<FermenterId, OffsetDateTime> = HashMap::new();
 
     let brewfather = Brewfather::new(config.brewfather.logging_id);
 
@@ -106,7 +155,7 @@ async fn main_loop(config: Config) {
         };
 
         for ferm in ferms {
-            let temp = match grainfather.get_fermenter_temperature(ferm.id).await {
+            let temp_record = match grainfather.get_fermenter_temperature(ferm.id).await {
                 Ok(Some(temp)) => temp,
                 Ok(None) => {
                     warn!("No recent temperature record of fermenter \"{}\".", ferm.name);
@@ -118,21 +167,9 @@ async fn main_loop(config: Config) {
                 }
             };
 
-            info!("Fermenter \"{}\": {:.02} C", ferm.name, temp.temperature);
+            info!("Fermenter \"{}\": {:.02} °C", ferm.name, temp_record.temperature);
 
-            let event = BrewfatherLoggingEvent { name: &ferm.name, temp: temp.temperature };
-
-            match brewfather.log(event).await {
-                Ok(()) => {
-                    info!("Logged temperature of fermenter \"{}\" to brewfather.", ferm.name);
-                }
-                Err(err) => {
-                    error!(
-                        "Error logging the temperature of fermenter \"{}\" to brewfather: {:?}",
-                        ferm.name, err
-                    );
-                }
-            }
+            log_temperature(&brewfather, &mut last_logged, &ferm, temp_record).await;
         }
 
         sleep(Duration::from_secs(15 * 60 + 1)).await;
@@ -140,7 +177,6 @@ async fn main_loop(config: Config) {
 }
 
 // WIP! do not log twice
-// WIP! do not log old
 
 #[tokio::main]
 async fn main() {

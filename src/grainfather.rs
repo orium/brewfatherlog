@@ -35,14 +35,23 @@ pub enum GrainfatherError {
     UnableToFindAuthCookie,
 }
 
+#[derive(Deserialize, Eq, PartialEq, Hash, Copy, Clone, Debug)]
+pub struct FermenterId(u64);
+
+impl FermenterId {
+    fn as_u64(self) -> u64 {
+        self.0
+    }
+}
+
 #[derive(Deserialize, Debug)]
 pub struct Fermenter {
-    pub id: u64,
+    pub id: FermenterId,
     pub name: String,
 }
 
 #[derive(Debug)]
-pub struct Temperature {
+pub struct TemperatureRecord {
     pub temperature: f32,
     pub timestamp: OffsetDateTime,
 }
@@ -148,8 +157,8 @@ impl Grainfather {
 
     pub async fn get_fermenter_temperature(
         &self,
-        fermenter_id: u64,
-    ) -> Result<Option<Temperature>, GrainfatherError> {
+        fermenter_id: FermenterId,
+    ) -> Result<Option<TemperatureRecord>, GrainfatherError> {
         #[derive(Deserialize, Debug)]
         struct Response {
             temperature: Vec<(i64, f32)>,
@@ -162,7 +171,7 @@ impl Grainfather {
         let from = OffsetDateTime::now_utc() - Duration::HOUR;
         let url = format!(
             "https://community.grainfather.com/my-equipment/fermentation-device/{}/history?from={}",
-            fermenter_id,
+            fermenter_id.as_u64(),
             from.format(&Iso8601::<DATETIME_FORMAT>).expect("failed to format time"),
         );
 
@@ -186,7 +195,7 @@ impl Grainfather {
                 .and_then(|v| serde_json::from_value::<Response>(v).ok())
                 .and_then(|r| r.temperature.into_iter().max_by_key(|(timestamp, _)| *timestamp))
                 .map(|(timestamp, temperature)| {
-                    Ok(Temperature {
+                    Ok(TemperatureRecord {
                         temperature,
                         timestamp: OffsetDateTime::from_unix_timestamp(timestamp / 1000)
                             .map_err(|error| GrainfatherError::ResponseTimestamp { error })?,
