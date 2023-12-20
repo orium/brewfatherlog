@@ -19,11 +19,12 @@
 //!
 //! ## Configuration
 //!
-//! On the first run Brewfatherlog will create a configuration file in your configuration directory (in POSIX systems
-//! that should be in `~/.config/`). You will need to edit that file to configure authentication for both Grainfather
-//! and Brewfather.
+//! On the first run Brewfatherlog will create a configuration file in your configuration directory. Brewfatherlog will
+//! tell you where the configuration file is. You will need to edit that file to configure authentication for
+//! both Grainfather and Brewfather.
 //!
-//! WIP! talk about enabling streaming logging in brewfather.
+//! In Brewfather you need to enable the "Custom Stream" integration in the
+//! [settings page](https://web.brewfather.app/tabs/settings) and put the logging id in the configuration file.
 //!
 //! ## Systemd daemon
 //!
@@ -43,18 +44,20 @@ use std::path::PathBuf;
 use std::time::Duration;
 use tokio::time::sleep;
 
+pub const PROGRAM_NAME: &str = env!("CARGO_PKG_NAME");
+
 fn program_dir_path() -> PathBuf {
     let home_dir: PathBuf = dirs::home_dir().expect("Unable to get home directory");
 
-    home_dir.join(format!(".{}", env!("CARGO_PKG_NAME")))
+    home_dir.join(format!(".{PROGRAM_NAME}"))
 }
 
 fn config_file_path() -> PathBuf {
-    program_dir_path().join(format!("{}.toml", env!("CARGO_PKG_NAME")))
+    program_dir_path().join(format!("{PROGRAM_NAME}.toml"))
 }
 
 fn log_file_path() -> PathBuf {
-    program_dir_path().join(format!("{}.log", env!("CARGO_PKG_NAME")))
+    program_dir_path().join(format!("{PROGRAM_NAME}.log"))
 }
 
 fn init_logging() {
@@ -83,16 +86,8 @@ fn init_logging() {
     .expect("failed to initialize loggers");
 }
 
-#[tokio::main]
-async fn main() {
-    Config::create_file_if_nonexistent(&config_file_path());
-    // WIP! if the file did not exist we should print a nice message telling the user to edit the file and exit.
-
-    let config: Config = Config::from_config_file(&config_file_path());
-
-    init_logging();
-
-    info!("Starting {}.", env!("CARGO_PKG_NAME"));
+async fn main_loop(config: Config) {
+    info!("Starting {}.", PROGRAM_NAME);
 
     let brewfather = Brewfather::new(config.brewfather.logging_id);
 
@@ -146,3 +141,24 @@ async fn main() {
 
 // WIP! do not log twice
 // WIP! do not log old
+
+#[tokio::main]
+async fn main() {
+    let config_file = config_file_path();
+    let created_config_file = Config::create_file_if_nonexistent(&config_file);
+
+    if created_config_file {
+        println!(
+            "Created configuration file on \"{}\". Please edit it and run {} again.",
+            config_file.display(),
+            PROGRAM_NAME,
+        );
+        std::process::exit(0);
+    }
+
+    let config: Config = Config::from_config_file(&config_file);
+
+    init_logging();
+
+    main_loop(config).await;
+}

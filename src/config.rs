@@ -39,15 +39,20 @@ impl Config {
         toml::from_str::<Config>(string).expect("failed to parse default configuration file")
     }
 
-    pub fn create_file_if_nonexistent(config_file_path: &Path) {
-        if !config_file_path.exists() {
-            let default_config: &str = include_str!("default-config.toml");
+    pub fn create_file_if_nonexistent(config_file_path: &Path) -> bool {
+        match config_file_path.exists() {
+            false => {
+                let default_config: &str = include_str!("default-config.toml");
 
-            std::fs::create_dir_all(config_file_path.parent().unwrap())
-                .expect("Failed to create the program directory");
+                std::fs::create_dir_all(config_file_path.parent().unwrap())
+                    .expect("Failed to create the program directory");
 
-            std::fs::write(config_file_path, default_config)
-                .expect("failed to write default configuration file");
+                std::fs::write(config_file_path, default_config)
+                    .expect("failed to write default configuration file");
+
+                true
+            }
+            true => false,
         }
     }
 }

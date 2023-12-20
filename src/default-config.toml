@@ -3,5 +3,5 @@ email = ""
 password = ""
 
 [brewfather]
-# WIP! explain here how to setup brewfather.
+# Enable the "Custom Stream" integration in https://web.brewfather.app/tabs/settings and put the logging id here:
 logging_id = ""
