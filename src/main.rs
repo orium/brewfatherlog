@@ -131,25 +131,32 @@ async fn log_temperature(
     }
 }
 
-// WIP! request timeout 10 s
-
 async fn main_loop(config: Config) -> ! {
+    let init_grainfather =
+        || Grainfather::new(&config.grainfather.auth.email, &config.grainfather.auth.password);
+
     info!("Starting {}.", PROGRAM_NAME);
 
     let mut last_logged: HashMap<FermenterId, OffsetDateTime> = HashMap::new();
 
-    let brewfather = Brewfather::new(config.brewfather.logging_id);
+    let brewfather = Brewfather::new(config.brewfather.logging_id)
+        .expect("error initializing brewfather client");
 
     loop {
-        let grainfather =
-            Grainfather::new(&config.grainfather.auth.email, &config.grainfather.auth.password)
-                .await
-                .unwrap();
+        let grainfather = match init_grainfather().await {
+            Ok(grainfather) => grainfather,
+            Err(err) => {
+                error!("Error initializing grainfather client: {:?}", err);
+                sleep(Duration::from_secs(10)).await;
+                continue;
+            }
+        };
 
         let ferms = match grainfather.list_fermenters().await {
             Ok(ferms) => ferms,
             Err(err) => {
                 error!("Error getting fermenters: {:?}", err);
+                sleep(Duration::from_secs(10)).await;
                 continue;
             }
         };
@@ -175,8 +182,6 @@ async fn main_loop(config: Config) -> ! {
         sleep(Duration::from_secs(15 * 60 + 1)).await;
     }
 }
-
-// WIP! do not log twice
 
 #[tokio::main]
 async fn main() {

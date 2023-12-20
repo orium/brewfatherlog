@@ -12,6 +12,9 @@ use time::format_description::well_known::iso8601::TimePrecision;
 use time::format_description::well_known::{iso8601, Iso8601};
 use time::{Duration, OffsetDateTime};
 
+const CONNECTION_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(60);
+const REQUEST_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(30);
+
 #[derive(thiserror::Error, Debug)]
 pub enum GrainfatherError {
     #[error("transport error: {error}")]
@@ -63,7 +66,10 @@ pub struct Grainfather {
 
 impl Grainfather {
     pub async fn new(email: &str, password: &str) -> Result<Grainfather, GrainfatherError> {
-        let client = reqwest::Client::new();
+        let client = reqwest::ClientBuilder::new()
+            .connect_timeout(CONNECTION_TIMEOUT)
+            .timeout(REQUEST_TIMEOUT)
+            .build()?;
         let auth_cookie = Grainfather::login(&client, email, password).await?;
 
         Ok(Grainfather { auth_cookie, client })

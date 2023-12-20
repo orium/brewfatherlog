@@ -6,6 +6,10 @@
 use reqwest::header::CONTENT_TYPE;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
+use std::time::Duration;
+
+const CONNECTION_TIMEOUT: Duration = Duration::from_secs(60);
+const REQUEST_TIMEOUT: Duration = Duration::from_secs(30);
 
 #[derive(thiserror::Error, Debug)]
 pub enum BrewfatherError {
@@ -34,8 +38,13 @@ pub struct Brewfather {
 }
 
 impl Brewfather {
-    pub fn new(logging_id: impl Into<String>) -> Brewfather {
-        Brewfather { logging_id: logging_id.into(), client: reqwest::Client::new() }
+    pub fn new(logging_id: impl Into<String>) -> Result<Brewfather, BrewfatherError> {
+        let client = reqwest::ClientBuilder::new()
+            .connect_timeout(CONNECTION_TIMEOUT)
+            .timeout(REQUEST_TIMEOUT)
+            .build()?;
+
+        Ok(Brewfather { logging_id: logging_id.into(), client })
     }
 
     pub async fn log(&self, event: BrewfatherLoggingEvent<'_>) -> Result<(), BrewfatherError> {
