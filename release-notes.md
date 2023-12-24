@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.1.1
+
+* Better error handling when there's no temperature records.
+
 ## 0.1.0
 
 * First usable release.
