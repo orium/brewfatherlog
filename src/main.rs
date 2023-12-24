@@ -195,7 +195,7 @@ async fn main_loop(config: Config) -> ! {
             let temp_record = match grainfather.get_fermenter_temperature(ferm.id).await {
                 Ok(Some(temp)) => temp,
                 Ok(None) => {
-                    warn!("No recent temperature record of fermenter \"{}\".", ferm.name);
+                    info!("No recent temperature record of fermenter \"{}\".", ferm.name);
                     continue;
                 }
                 Err(err) => {

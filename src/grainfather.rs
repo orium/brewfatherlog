@@ -195,6 +195,7 @@ impl Grainfather {
 
         match status_code {
             StatusCode::OK => serde_json::from_str::<HashMap<String, serde_json::Value>>(&payload)
+                .or_else(|_| serde_json::from_str::<Vec<()>>(&payload).map(|_| HashMap::new()))
                 .map_err(|_| GrainfatherError::ResponseParsing { payload })?
                 .into_values()
                 .find(|v| v.as_object().is_some_and(|m| m.contains_key("temperature")))
