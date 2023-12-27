@@ -150,7 +150,7 @@ async fn log_temperature(
         }
         Err(err) => {
             error!(
-                "Error logging the temperature of fermenter \"{}\" to brewfather: {:?}",
+                "Error logging the temperature of fermenter \"{}\" to brewfather: {}",
                 fermenter.name, err
             );
         }
@@ -172,7 +172,7 @@ async fn main_loop(config: Config) -> ! {
         let grainfather = match init_grainfather().await {
             Ok(grainfather) => grainfather,
             Err(err) => {
-                error!("Error initializing grainfather client: {:?}", err);
+                error!("Error initializing grainfather client: {}", err);
                 sleep(Duration::from_secs(10)).await;
                 continue;
             }
@@ -181,7 +181,7 @@ async fn main_loop(config: Config) -> ! {
         let ferms = match grainfather.list_fermenters().await {
             Ok(ferms) => ferms,
             Err(err) => {
-                error!("Error getting fermenters: {:?}", err);
+                error!("Error getting fermenters: {}", err);
                 sleep(Duration::from_secs(10)).await;
                 continue;
             }
@@ -199,7 +199,7 @@ async fn main_loop(config: Config) -> ! {
                     continue;
                 }
                 Err(err) => {
-                    error!("Error getting temperature of fermenter \"{}\": {:?}", ferm.name, err);
+                    error!("Error getting temperature of fermenter \"{}\": {}", ferm.name, err);
                     continue;
                 }
             };
