@@ -125,10 +125,10 @@ async fn log_temperature(
 
     if age > Duration::from_secs(30 * 60) {
         warn!(
-            "Ignoring temperature {:.02} °C of fermenter \"{}\" because the temperature is too old ({:?}).",
+            "Ignoring temperature {:.02} °C of fermenter \"{}\" because the temperature is too old ({}).",
             temp_record.temperature,
             fermenter.name,
-            age,
+            humantime::format_duration(Duration::from_secs(age.whole_seconds() as u64)),
         );
         return;
     }
@@ -192,21 +192,19 @@ async fn main_loop(config: Config) -> ! {
         }
 
         for ferm in ferms {
-            let temp_record = match grainfather.get_fermenter_temperature(ferm.id).await {
-                Ok(Some(temp)) => temp,
+            match grainfather.get_fermenter_temperature(ferm.id).await {
+                Ok(Some(temp_record)) => {
+                    info!("Fermenter \"{}\": {:.02} °C", ferm.name, temp_record.temperature);
+
+                    log_temperature(&brewfather, &mut last_logged, &ferm, temp_record).await;
+                }
                 Ok(None) => {
                     info!("No recent temperature record of fermenter \"{}\".", ferm.name);
-                    continue;
                 }
                 Err(err) => {
                     error!("Error getting temperature of fermenter \"{}\": {}", ferm.name, err);
-                    continue;
                 }
-            };
-
-            info!("Fermenter \"{}\": {:.02} °C", ferm.name, temp_record.temperature);
-
-            log_temperature(&brewfather, &mut last_logged, &ferm, temp_record).await;
+            }
         }
 
         sleep(Duration::from_secs(15 * 60 + 1)).await;
