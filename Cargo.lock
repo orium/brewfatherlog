@@ -58,7 +58,7 @@ checksum = "327762f6e5a765692301e5bb513e0d9fef63be86bbc14528052b1cd3e6f03e07"
 
 [[package]]
 name = "brewfatherlog"
-version = "0.1.2-pre"
+version = "0.1.2"
 dependencies = [
  "dirs",
  "humantime",

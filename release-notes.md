@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.1.2
+
+* Better error logging.
+
 ## 0.1.1
 
 * Better error handling when there's no temperature records.
