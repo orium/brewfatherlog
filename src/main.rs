@@ -191,7 +191,6 @@ async fn main_loop(config: Config) -> ! {
             info!("No fermenters found.");
         }
 
-        // WIP! do in parallel?
         for ferm in ferms {
             match grainfather.get_fermenter_temperature(ferm.id).await {
                 Ok(Some(temp_record)) => {
