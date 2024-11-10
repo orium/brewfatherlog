@@ -101,7 +101,6 @@ fn init_logging() {
         .expect("failed to create the program directory");
 
     let log_file = std::fs::OpenOptions::new()
-        .write(true)
         .append(true)
         .create(true)
         .open(log_file_path)
@@ -124,11 +123,13 @@ async fn log_temperature(
     let age: time::Duration = now - temp_record.timestamp;
 
     if age > Duration::from_secs(30 * 60) {
+        let age = Duration::from_secs(age.whole_seconds().try_into().expect("fail to convert age"));
+
         warn!(
             "Ignoring temperature {:.02} °C of fermenter \"{}\" because the temperature is too old ({}).",
             temp_record.temperature,
             fermenter.name,
-            humantime::format_duration(Duration::from_secs(age.whole_seconds() as u64)),
+            humantime::format_duration(age),
         );
         return;
     }
