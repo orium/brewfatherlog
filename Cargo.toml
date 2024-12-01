@@ -30,16 +30,16 @@ include = [
 [dependencies]
 dirs = "5.0.1"
 humantime = "2.1.0"
-log = { version = "0.4.21", features = [] }
-reqwest = { version = "0.12.4", features = ["json", "cookies"] }
-serde = { version = "1.0.202", features = ["derive"] }
-serde_derive = "1.0.202"
-serde_json = "1.0.117"
+log = { version = "0.4.22", features = [] }
+reqwest = { version = "0.12.9", features = ["json", "cookies"] }
+serde = { version = "1.0.215", features = ["derive"] }
+serde_derive = "1.0.215"
+serde_json = "1.0.133"
 simplelog = "0.12.2"
-thiserror = "1.0.61"
+thiserror = "2.0.3"
 time = { version = "0.3.36", features = ["formatting"] }
-tokio = { version = "1.37.0", features = ["rt-multi-thread", "macros"] }
-toml = "0.8.13"
+tokio = { version = "1.41.1", features = ["rt-multi-thread", "macros"] }
+toml = "0.8.19"
 
 [features]
 fatal-warnings = []
