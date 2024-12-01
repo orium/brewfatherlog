@@ -55,12 +55,10 @@
 //! systemctl start brewfatherlog
 //! ```
 
-mod config;
-
 use crate::config::Config;
 use brewfatherlog::brewfather::{Brewfather, BrewfatherLoggingEvent};
 use brewfatherlog::grainfather::{Fermenter, FermenterId, Grainfather, TemperatureRecord};
-use log::{error, info, warn};
+use log::{debug, error, info, warn};
 use simplelog::{
     format_description, ColorChoice, CombinedLogger, LevelFilter, TermLogger, TerminalMode,
     WriteLogger,
@@ -70,6 +68,8 @@ use std::path::PathBuf;
 use std::time::Duration;
 use time::OffsetDateTime;
 use tokio::time::sleep;
+
+mod config;
 
 pub const PROGRAM_NAME: &str = env!("CARGO_PKG_NAME");
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -200,7 +200,7 @@ async fn main_loop(config: Config) -> ! {
                     log_temperature(&brewfather, &mut last_logged, &ferm, temp_record).await;
                 }
                 Ok(None) => {
-                    info!("No recent temperature record of fermenter \"{}\".", ferm.name);
+                    debug!("No recent temperature record of fermenter \"{}\".", ferm.name);
                 }
                 Err(err) => {
                     error!("Error getting temperature of fermenter \"{}\": {}", ferm.name, err);
