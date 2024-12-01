@@ -1,5 +1,10 @@
 # Release notes
 
+## 0.1.3
+
+* Log "no recent temperatures" as debug, to keep the logs short.
+* Updated dependencies.
+
 ## 0.1.2
 
 * Better error logging.
