@@ -5,7 +5,7 @@ version = "0.1.4-pre"
 authors = ["Diogo Sousa <diogogsousa@gmail.com>"]
 
 edition = "2021"
-rust-version = "1.71.1"
+rust-version = "1.80.0"
 
 homepage = "https://github.com/orium/brewfatherlog"
 repository = "https://github.com/orium/brewfatherlog"
@@ -28,18 +28,18 @@ include = [
 ]
 
 [dependencies]
-dirs = "5.0.1"
+dirs = "6.0.0"
 humantime = "2.1.0"
-log = { version = "0.4.22", features = [] }
-reqwest = { version = "0.12.9", features = ["json", "cookies"] }
-serde = { version = "1.0.215", features = ["derive"] }
-serde_derive = "1.0.215"
-serde_json = "1.0.133"
+log = { version = "0.4.25", features = [] }
+reqwest = { version = "0.12.12", features = ["json", "cookies"] }
+serde = { version = "1.0.218", features = ["derive"] }
+serde_derive = "1.0.218"
+serde_json = "1.0.139"
 simplelog = "0.12.2"
-thiserror = "2.0.3"
-time = { version = "0.3.36", features = ["formatting"] }
-tokio = { version = "1.41.1", features = ["rt-multi-thread", "macros"] }
-toml = "0.8.19"
+thiserror = "2.0.11"
+time = { version = "0.3.37", features = ["formatting"] }
+tokio = { version = "1.43.0", features = ["rt-multi-thread", "macros"] }
+toml = "0.8.20"
 
 [features]
 fatal-warnings = []
