@@ -60,8 +60,8 @@ use brewfatherlog::brewfather::{Brewfather, BrewfatherLoggingEvent};
 use brewfatherlog::grainfather::{Fermenter, FermenterId, Grainfather, TemperatureRecord};
 use log::{debug, error, info, warn};
 use simplelog::{
-    format_description, ColorChoice, CombinedLogger, LevelFilter, TermLogger, TerminalMode,
-    WriteLogger,
+    ColorChoice, CombinedLogger, LevelFilter, TermLogger, TerminalMode, WriteLogger,
+    format_description,
 };
 use std::collections::HashMap;
 use std::path::PathBuf;

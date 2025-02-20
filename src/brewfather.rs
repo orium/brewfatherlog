@@ -3,8 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-use reqwest::header::CONTENT_TYPE;
 use reqwest::StatusCode;
+use reqwest::header::CONTENT_TYPE;
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 
