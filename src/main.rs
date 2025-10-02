@@ -93,6 +93,8 @@ fn init_logging() {
         .set_time_format_custom(format_description!(
             "[year]-[month]-[day] [hour]:[minute]:[second].[subsecond digits:3]"
         ))
+        .set_time_offset_to_local()
+        .expect("failed to set time offset to local")
         .build();
 
     let log_file_path = log_file_path();
