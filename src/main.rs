@@ -164,7 +164,7 @@ async fn main_loop(config: Config) -> ! {
     let init_grainfather =
         || Grainfather::new(&config.grainfather.auth.email, &config.grainfather.auth.password);
 
-    info!("Starting {} v{}.", PROGRAM_NAME, VERSION);
+    info!("Starting {PROGRAM_NAME} v{VERSION}.");
 
     let mut last_logged: HashMap<FermenterId, OffsetDateTime> = HashMap::new();
 
@@ -175,7 +175,7 @@ async fn main_loop(config: Config) -> ! {
         let grainfather = match init_grainfather().await {
             Ok(grainfather) => grainfather,
             Err(err) => {
-                error!("Error initializing grainfather client: {}", err);
+                error!("Error initializing grainfather client: {err}");
                 sleep(Duration::from_secs(10)).await;
                 continue;
             }
@@ -184,7 +184,7 @@ async fn main_loop(config: Config) -> ! {
         let ferms = match grainfather.list_fermenters().await {
             Ok(ferms) => ferms,
             Err(err) => {
-                error!("Error getting fermenters: {}", err);
+                error!("Error getting fermenters: {err}");
                 sleep(Duration::from_secs(10)).await;
                 continue;
             }
