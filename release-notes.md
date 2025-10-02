@@ -1,5 +1,10 @@
 # Release notes
 
+## 0.1.4
+
+* Log time using local time instead of UTC.
+* Updated dependencies.
+
 ## 0.1.3
 
 * Log "no recent temperatures" as debug, to keep the logs short.
