@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Install rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
 
       - name: Install cargo plugins
         run: |
@@ -35,7 +37,6 @@ jobs:
 
       - name: Check everything
         run: bash ./tools/check.sh basic doc_url_links unused_deps packaging fmt toml_fmt readme
-
 
   msrv:
     runs-on: ubuntu-latest
@@ -59,6 +60,8 @@ jobs:
     steps:
       - name: Install rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
 
       - name: Checkout repository
         uses: actions/checkout@v4
