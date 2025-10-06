@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.1.5
+
+* Relicensed project under the MIT license.
+
 ## 0.1.4
 
 * Log time using local time instead of UTC.
