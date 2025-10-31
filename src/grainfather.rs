@@ -3,12 +3,13 @@ use reqwest::header::{ACCEPT, CONTENT_TYPE, COOKIE, HeaderMap, HeaderValue, ORIG
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::num::NonZeroU8;
+use std::time::Duration;
+use time::OffsetDateTime;
 use time::format_description::well_known::iso8601::TimePrecision;
 use time::format_description::well_known::{Iso8601, iso8601};
-use time::{Duration, OffsetDateTime};
 
-const CONNECTION_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(60);
-const REQUEST_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(30);
+const CONNECTION_TIMEOUT: Duration = Duration::from_secs(60);
+const REQUEST_TIMEOUT: Duration = Duration::from_secs(30);
 
 #[derive(thiserror::Error, Debug)]
 pub enum GrainfatherError {
@@ -169,7 +170,7 @@ impl Grainfather {
             .set_time_precision(TimePrecision::Second { decimal_digits: NonZeroU8::new(3) })
             .encode();
 
-        let from = OffsetDateTime::now_utc() - Duration::HOUR;
+        let from = OffsetDateTime::now_utc() - Duration::from_hours(1);
         let url = format!(
             "https://community.grainfather.com/my-equipment/fermentation-device/{}/history?from={}",
             fermenter_id.as_u64(),
