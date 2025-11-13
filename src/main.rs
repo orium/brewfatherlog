@@ -1,5 +1,3 @@
-#![cfg_attr(feature = "fatal-warnings", deny(warnings))]
-
 //! Brewfatherlog is a small tool to synchronize the temperatures of your Grainfather fermenters to Brewfather.
 //!
 //! # Instalation
