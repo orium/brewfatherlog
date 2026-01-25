@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.1.6
+
+* Updated dependencies.
+
 ## 0.1.5
 
 * Relicensed project under the MIT license.
