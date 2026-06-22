@@ -20,9 +20,6 @@ jobs:
           - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
             zip: none
-          - target: x86_64-apple-darwin
-            os: macos-13
-            zip: all
           - target: aarch64-apple-darwin
             os: macos-14
             zip: all
