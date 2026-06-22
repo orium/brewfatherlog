@@ -30,16 +30,16 @@ include = [
 [dependencies]
 dirs = "6.0.0"
 humantime = "2.3.0"
-log = { version = "0.4.28", features = [] }
-reqwest = { version = "0.12.23", features = ["json", "cookies"] }
+log = { version = "0.4.33", features = [] }
+reqwest = { version = "0.13.4", features = ["json", "cookies"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_derive = "1.0.228"
-serde_json = "1.0.149"
+serde_json = "1.0.150"
 simplelog = "0.12.2"
 thiserror = "2.0.18"
-time = { version = "0.3.46", features = ["formatting"] }
-tokio = { version = "1.49.0", features = ["rt-multi-thread", "macros"] }
-toml = "0.9.8"
+time = { version = "0.3.51", features = ["formatting"] }
+tokio = { version = "1.52.3", features = ["rt-multi-thread", "macros"] }
+toml = "1.1.2"
 
 [lints.clippy]
 all = { level = "warn", priority = -2 }
