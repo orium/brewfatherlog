@@ -1,36 +1,45 @@
-name: Release binaries
+name: Release
 
 on:
   release:
     types: [created]
 
+permissions:
+  contents: write
+
 jobs:
   release:
-    runs-on: ubuntu-latest
+    name: release ${{ matrix.target }}
+
+    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         include:
-          - target: x86_64-unknown-linux-gnu
+          - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
-          - target: aarch64-unknown-linux-gnu
-            os: ubuntu-latest
+            zip: none
           - target: x86_64-apple-darwin
-            os: macos-latest
+            os: macos-13
+            zip: all
           - target: aarch64-apple-darwin
-            os: macos-latest
-          - target: x86_64-pc-windows-msvc
+            os: macos-14
+            zip: all
+          - target: x86_64-pc-windows-gnu
             os: windows-latest
+            zip: all
 
     steps:
       - uses: actions/checkout@v4
+
       - uses: taiki-e/upload-rust-binary-action@v1
         with:
           bin: brewfatherlog
-          include: LICENSE.md,README.md
           target: ${{ matrix.target }}
-          archive: $bin-$tag-$target
-          tar: unix
-          zip: windows
-          token: ${{ secrets.GITHUB_TOKEN }}
+          archive: $bin_$tag_$target
+          tar: all
+          zip: ${{ matrix.zip }}
+          include: README.md,LICENSE.md
+          checksum: sha256
+          locked: true
