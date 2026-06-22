@@ -1,5 +1,10 @@
 # Release notes
 
+## 0.1.7
+
+* Migrate to `taiki-e/upload-rust-binary-action` for release binaries.
+* Updated dependencies.
+
 ## 0.1.6
 
 * Updated dependencies.
