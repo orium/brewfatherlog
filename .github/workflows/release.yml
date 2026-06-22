@@ -31,7 +31,7 @@ jobs:
             zip: all
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: taiki-e/upload-rust-binary-action@v1
         with:
