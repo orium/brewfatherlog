@@ -3,7 +3,7 @@ use reqwest::header::CONTENT_TYPE;
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 
-const CONNECTION_TIMEOUT: Duration = Duration::from_secs(60);
+const CONNECTION_TIMEOUT: Duration = Duration::from_mins(1);
 const REQUEST_TIMEOUT: Duration = Duration::from_secs(30);
 
 #[derive(thiserror::Error, Debug)]

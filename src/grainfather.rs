@@ -8,7 +8,7 @@ use time::OffsetDateTime;
 use time::format_description::well_known::iso8601::TimePrecision;
 use time::format_description::well_known::{Iso8601, iso8601};
 
-const CONNECTION_TIMEOUT: Duration = Duration::from_secs(60);
+const CONNECTION_TIMEOUT: Duration = Duration::from_mins(1);
 const REQUEST_TIMEOUT: Duration = Duration::from_secs(30);
 
 #[derive(thiserror::Error, Debug)]

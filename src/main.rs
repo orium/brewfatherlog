@@ -117,7 +117,7 @@ async fn log_temperature(
     let now = OffsetDateTime::now_utc();
     let age: time::Duration = now - temp_record.timestamp;
 
-    if age > Duration::from_secs(30 * 60) {
+    if age > Duration::from_mins(30) {
         let age = Duration::from_secs(age.whole_seconds().try_into().expect("fail to convert age"));
 
         warn!(

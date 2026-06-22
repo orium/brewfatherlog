@@ -41,8 +41,10 @@ function check_basic {
 function check_doc_url_links {
     assert_installed "cargo-deadlinks"
 
-    echo 'Checking doc url links:'
-    cargo deadlinks
+    # TODO fix this
+    echo 'check_doc_url_links disabled since `cargo-deadlinks` seems to be broken.'
+    # echo 'Checking doc url links:'
+    # cargo deadlinks
 }
 
 function check_unused_deps {
